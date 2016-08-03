@@ -1,5 +1,5 @@
 # Create your views here.
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, Http404
 
 from .models import Tweet
@@ -20,8 +20,5 @@ def overview(request):
 
 
 def tweet(request, tweetid):
-    try:
-        entry = Tweet.objects.get(tweet_id=tweetid)
-    except Tweet.DoesNotExist:
-        raise Http404("Tweet does not exist")
+    entry = get_object_or_404(Tweet, tweet_id=tweetid)
     return render(request, 'news/tweet.html', {'tweet': entry})
