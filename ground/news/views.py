@@ -1,9 +1,19 @@
 # Create your views here.
 from django.http import HttpResponse
+from django.template import loader
+
+from .models import Tweet
 
 
 def index(request):
-    return HttpResponse("Hello, world. You're at the news index.")
+    tweet_list = Tweet.objects.order_by('-tweet_id')[:2]
+    template = loader.get_template('news/index.html')
+
+    context = {
+        'tweet_list': tweet_list,
+    }
+
+    return HttpResponse(template.render(context, request))
 
 
 def overview(request):
