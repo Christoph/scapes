@@ -16,6 +16,7 @@ Including another URLconf
 from django.conf.urls import url
 from . import views
 
+app_name = 'news'
 urlpatterns = [
     # ex: /news/
     url(r'^$', views.index, name='index'),

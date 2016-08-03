@@ -1,7 +1,7 @@
 {% if tweet_list %}
     <ul>
         {% for entry in tweet_list %}
-            <li><a href="/news/tweets/{{ entry.tweet_id }}/">{{ entry.text }}</a></li>
+            <li><a href="{% url 'news:tweet' entry.tweet_id %}">{{ entry.text }}</a></li>
         {% endfor %}
     </ul>
 {% else %}
