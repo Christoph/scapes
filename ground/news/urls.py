@@ -17,10 +17,10 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
-    # /news/
+    # ex: /news/
     url(r'^$', views.index, name='index'),
     # ex: /news/tweets/
-    url(r'^/tweets/$', views.overview, name='overview'),
+    url(r'^tweets/$', views.overview, name='overview'),
     # ex: /news/tweets/4/
-    url(r'^/tweets/(?P<tweet_id>[0-9]+)/$', views.tweet, name='tweet'),
+    url(r'^tweets/(?P<tweet_id>[0-9]+)/$', views.tweet, name='tweet'),
 ]
