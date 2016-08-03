@@ -39,4 +39,9 @@ class Tweet(models.Model):
     in_reply_to_status_id = models.BigIntegerField(null=True, blank=True, default=None)
     retweeted_status_id = models.BigIntegerField(null=True, blank=True, default=None)
 
+    def __str__(self):
+        return self.text
+
+    def is_retweet(self):
+        return self.retweeted_status_id is not None
 
