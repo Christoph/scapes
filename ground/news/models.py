@@ -11,9 +11,9 @@ def parse_datetime(string):
 
 
 class StreamFilters(models.Model):
-    tracks = models.CharField(max_length=200, null=False)
-    locations = models.CharField(max_length=200)
-    languages = models.CharField(max_length=200)
+    tracks = models.CharField(max_length=200)
+    locations = models.CharField(max_length=200, blank=True, null=True)
+    languages = models.CharField(max_length=200, blank=True, null=True)
 
     def __str__(self):
         return self.tracks
@@ -21,7 +21,7 @@ class StreamFilters(models.Model):
 
 class StreamState(models.Model):
     # State
-    is_active = models.BooleanField()
+    is_active = models.BooleanField(default=False)
 
     # Login
     c_key = models.CharField(max_length=100)
@@ -30,7 +30,7 @@ class StreamState(models.Model):
     a_secret = models.CharField(max_length=100)
 
     def __str__(self):
-        return self.is_active
+        return "State"
 
 
 # Create your models here.

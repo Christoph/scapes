@@ -42,7 +42,7 @@ class Twitter:
 
 
     def connect_twitter(self):
-        streamstate = StreamState.objects.get(pk=1)
+        streamstate = StreamState.objects.get(pk=3)
         listener = StdOutListener()
 
         auth = OAuthHandler(streamstate.c_key, streamstate.c_secret)
@@ -57,11 +57,11 @@ class Twitter:
         filters = StreamFilters.objects.get(pk=1)
 
         tracks = literal_eval(filters.tracks)
-        locations = literal_eval(filters.locations)
-        languages = literal_eval(filters.languages)
+        #locations = literal_eval(filters.locations)
+        #languages = literal_eval(filters.languages)
 
         # stream.filter(track=['europe'])
-        self.stream.filter(locations=locations, languages=languages, tracks=tracks)
+        self.stream.filter(track=tracks)
 
     def disconnet_from_stream(self):
         self.stream.disconnect()
