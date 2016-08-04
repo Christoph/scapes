@@ -1,4 +1,36 @@
 from django.db import models
+from datetime import datetime
+from django.utils import timezone
+from email._parseaddr import parsedate
+
+current_timezone = timezone.get_current_timezone()
+
+
+def parse_datetime(string):
+    return datetime(*(parsedate(string)[:6]), tzinfo=current_timezone)
+
+
+class StreamFilters(models.Model):
+    tracks = models.CharField(max_length=200, null=False)
+    locations = models.CharField(max_length=200)
+    languages = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.tracks
+
+
+class StreamState(models.Model):
+    # State
+    is_active = models.BooleanField()
+
+    # Login
+    c_key = models.CharField(max_length=100)
+    c_secret = models.CharField(max_length=100)
+    a_token = models.CharField(max_length=100)
+    a_secret = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.is_active
 
 
 # Create your models here.
@@ -45,3 +77,75 @@ class Tweet(models.Model):
     def is_retweet(self):
         return self.retweeted_status_id is not None
 
+    @classmethod
+    def create_from_json(cls, raw):
+
+        user = raw['user']
+        retweeted_status = raw.get('retweeted_status')
+        if retweeted_status is None:
+            retweeted_status = {'id': None}
+
+        # The "coordinates" entry looks like this:
+        #
+        # "coordinates":
+        # {
+        #     "coordinates":
+        #     [
+        #         -75.14310264,
+        #         40.05701649
+        #     ],
+        #     "type":"Point"
+        # }
+
+        coordinates = (None, None)
+        if raw['coordinates']:
+            coordinates = raw['coordinates']['coordinates']
+
+        # Replace negative counts with None to indicate missing data
+        counts = {
+            'favorite_count': raw.get('favorite_count'),
+            'retweet_count': raw.get('retweet_count'),
+            'user_followers_count': raw.get('followers_count'),
+            'user_friends_count': raw.get('friends_count'),
+        }
+        for key in counts:
+            if counts[key] is not None and counts[key] < 0:
+                counts[key] = None
+
+        return cls(
+                # Basic tweet info
+                tweet_id=raw['id'],
+                text=raw['text'],
+                truncated=raw['truncated'],
+                lang=raw.get('lang'),
+
+                # Basic user info
+                user_id=user['id'],
+                user_screen_name=user['screen_name'],
+                user_name=user['name'],
+                user_verified=user['verified'],
+
+                # Timing parameters
+                created_at=parse_datetime(raw['created_at']),
+                user_utc_offset=user.get('utc_offset'),
+                user_time_zone=user.get('time_zone'),
+
+                # none, low, or medium
+                filter_level=raw.get('filter_level'),
+
+                # Geo parameters
+                latitude=coordinates[1],
+                longitude=coordinates[0],
+                user_geo_enabled=user.get('geo_enabled'),
+                user_location=user.get('location'),
+
+                # Engagement - not likely to be very useful for streamed tweets but whatever
+                favorite_count=counts.get('favorite_count'),
+                retweet_count=counts.get('retweet_count'),
+                user_followers_count=counts.get('user_followers_count'),
+                user_friends_count=counts.get('user_friends_count'),
+
+                # Relation to other tweets
+                in_reply_to_status_id=raw.get('in_reply_to_status_id'),
+                retweeted_status_id=retweeted_status['id']
+        )
