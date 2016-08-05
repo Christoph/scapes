@@ -24,14 +24,12 @@ class StdOutListener(StreamListener):
 
     def on_error(self, status):
         print(status)
+        streamstate = StreamState.objects.get(pk=3)
+
+        streamstate.is_active = False
+        streamstate.save()
+
         return False
-
-        '''
-
-        if status == 420:
-            # returning False in on_data disconnects the stream
-            return False
-            '''
 
 
 class Twitter:
@@ -61,7 +59,7 @@ class Twitter:
             tracks = literal_eval(filters.tracks)
             languages = literal_eval(filters.languages)
 
-            self.stream.filter(track=tracks, languages=languages)
+            self.stream.filter(track=tracks, languages=languages, async=True)
 
         # Filter by location and language
         if choosen == 2:
@@ -70,11 +68,21 @@ class Twitter:
             language = literal_eval(filters.languages)
             locations = literal_eval(filters.locations)
 
-            self.stream.filter(locations=locations, languages=language)
+            self.stream.filter(locations=locations, languages=language, async=True)
+
+        streamstate = StreamState.objects.get(pk=3)
+
+        streamstate.is_active = True
+        streamstate.save()
 
 
     def disconnet_from_stream(self):
         self.stream.disconnect()
+
+        streamstate = StreamState.objects.get(pk=3)
+
+        streamstate.is_active = False
+        streamstate.save()
 
 
 
