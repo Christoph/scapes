@@ -1,33 +1,30 @@
+{% extends "base.html" %}
+
 {# Load the tag library #}
 {% load bootstrap3 %}
 {% load fontawesome %}
 
-<head>
-    {# Load CSS and JavaScript #}
-    {% bootstrap_css %}
-    {% bootstrap_javascript %}
-    {% fontawesome_stylesheet %}
-</head>
+{# Load CSS and JavaScript #}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+{% fontawesome_stylesheet %}
 
-{# Display django.contrib.messages as Bootstrap alerts #}
-{% bootstrap_messages %}
-
-{% block bootstrap3_content %}
-
-    <div class="row" style="margin-left: 20px; margin-right: 20px">
-        <h1>Filters</h1>
-        <form method="post" action="">
-            {% csrf_token %}
-            {{ formset.management_form }}
-            {% for form in formset %}
-                <div class="col-sm-4">
-                    {{ form.id }}
-                    Filter: {{ forloop.counter }} {% fontawesome_icon 'user' %}
-                    {% bootstrap_form form %}
-                </div>
-            {% endfor %}
-            {% bootstrap_button "Save" button_type="submit" button_class="btn-primary" %}
-        </form>
-    </div>
-
+{% block content %}
+    {% block bootstrap3_content %}
+        <div class="row" style="margin-left: 20px; margin-right: 20px">
+            <h1>Filters</h1>
+            <form method="post" action="">
+                {% csrf_token %}
+                {{ formset.management_form }}
+                {% for form in formset %}
+                    <div class="col-sm-4">
+                        {{ form.id }}
+                        Filter: {{ forloop.counter }} {% fontawesome_icon 'user' %}
+                        {% bootstrap_form form %}
+                    </div>
+                {% endfor %}
+                {% bootstrap_button "Save" button_type="submit" button_class="btn-primary" %}
+            </form>
+        </div>
+    {% endblock %}
 {% endblock %}
