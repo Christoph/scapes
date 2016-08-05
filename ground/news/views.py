@@ -1,7 +1,8 @@
 # Create your views here.
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.forms import ModelForm, modelform_factory, modelformset_factory
+from django.urls import reverse
 
 from .models import Tweet, StreamFilters
 from Mining.twitter_miner import Twitter
@@ -44,15 +45,13 @@ def tweet(request, tweetid):
 
 
 def filterView(request):
-    entries = StreamFilters.objects.get(pk=1)
-
-    #form = FilterForm(request.POST, instance=entries)
     form = modelformset_factory(StreamFilters, form=FilterForm)
 
     if request.method == 'POST':
         formset = form(request.POST, request.FILES)
         if formset.is_valid():
             formset.save()
+            return HttpResponseRedirect(reverse('news:index'))
     else:
         formset = form()
 
