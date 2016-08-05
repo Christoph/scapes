@@ -53,15 +53,25 @@ class Twitter:
         self.stream = Stream(auth, listener)
 
 
-    def connect_to_stream(self):
-        filters = StreamFilters.objects.get(pk=1)
+    def connect_to_stream(self, choosen):
+        # Filter by track and language
+        if choosen == 1:
+            filters = StreamFilters.objects.get(pk=choosen)
 
-        tracks = literal_eval(filters.tracks)
-        #locations = literal_eval(filters.locations)
-        #languages = literal_eval(filters.languages)
+            tracks = literal_eval(filters.tracks)
+            languages = literal_eval(filters.languages)
 
-        # stream.filter(track=['europe'])
-        self.stream.filter(track=tracks)
+            self.stream.filter(track=tracks, languages=languages)
+
+        # Filter by location and language
+        if choosen == 2:
+            filters = StreamFilters.objects.get(pk=choosen)
+
+            language = literal_eval(filters.languages)
+            locations = literal_eval(filters.locations)
+
+            self.stream.filter(locations=locations, languages=language)
+
 
     def disconnet_from_stream(self):
         self.stream.disconnect()

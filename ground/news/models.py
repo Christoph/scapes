@@ -11,12 +11,15 @@ def parse_datetime(string):
 
 
 class StreamFilters(models.Model):
-    tracks = models.CharField(max_length=200)
+    tracks = models.CharField(max_length=200, blank=True, null=True)
     locations = models.CharField(max_length=200, blank=True, null=True)
     languages = models.CharField(max_length=200, blank=True, null=True)
 
     def __str__(self):
-        return self.tracks
+        if len(self.tracks) > 0:
+            return self.tracks
+        else:
+            return self.locations
 
 
 class StreamState(models.Model):

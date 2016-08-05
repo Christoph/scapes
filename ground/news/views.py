@@ -25,7 +25,7 @@ def index(request):
 
 
 def overview(request):
-    twitter.connect_to_stream()
+    twitter.connect_to_stream(2)
     print("connected")
 
     return HttpResponse("Twitter Stream")
