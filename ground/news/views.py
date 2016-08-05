@@ -5,10 +5,9 @@ from django.http import HttpResponse
 from .models import Tweet
 from Mining.twitter_miner import Twitter
 
-from django.conf import settings
 
 # Create twitter miner instance
-twitter = Twitter(settings.CONSUMER_KEY, settings.CONSUMER_SECRET, settings.ACCESS_TOKEN, settings.ACCESS_SECRET)
+twitter = Twitter()
 twitter.connect_twitter()
 
 

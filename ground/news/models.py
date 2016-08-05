@@ -39,7 +39,7 @@ class StreamState(models.Model):
 # Create your models here.
 class Tweet(models.Model):
     # Basic tweet info
-    tweet_id = models.BigIntegerField()
+    tweet_id = models.BigIntegerField(primary_key=True)
     text = models.CharField(max_length=250)
     truncated = models.BooleanField(default=False)
     lang = models.CharField(max_length=9, null=True, blank=True, default=None)

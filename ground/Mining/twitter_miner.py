@@ -36,7 +36,7 @@ class StdOutListener(StreamListener):
 
 class Twitter:
 
-    def __init__(self, c_key, c_secret, a_token, a_secret):
+    def __init__(self):
         self.api = []
         self.stream = []
 
