@@ -1,9 +1,13 @@
-{% if tweet_list %}
-    <ul>
-        {% for entry in tweet_list %}
-            <li><a href="{% url 'news:tweet' entry.tweet_id %}">{{ entry.text }}</a></li>
-        {% endfor %}
-    </ul>
-{% else %}
-    <p>No tweets are available.</p>
-{% endif %}
+{% extends "base.html" %}
+
+{% block content %}
+    {% if tweet_list %}
+        <ul>
+            {% for entry in tweet_list %}
+                <li><a href="{% url 'news:tweet' entry.tweet_id %}">{{ entry.text }}</a></li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No tweets are available.</p>
+    {% endif %}
+{% endblock %}

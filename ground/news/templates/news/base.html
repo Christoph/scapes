@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+
+{# Load the tag library #}
+{% load bootstrap3 %}
+{% load fontawesome %}
+
+<head>
+    <meta charset="UTF-8">
+    {# Load CSS and JavaScript #}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    {% fontawesome_stylesheet %}
+
+    <title>Scapes</title>
+</head>
+<body>
+    <h1 style="text-align: center">Twitter Scapes</h1>
+    <hr>
+    {% block content %}
+
+    {% endblock %}
+</body>
+</html>
