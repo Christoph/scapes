@@ -1,18 +1,33 @@
-<h1>Filter</h1>
+{# Load the tag library #}
+{% load bootstrap3 %}
+{% load fontawesome %}
 
-{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+<head>
+    {# Load CSS and JavaScript #}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    {% fontawesome_stylesheet %}
+</head>
 
-<form method="post" action="">
-    {% csrf_token %}
-    {{ formset.management_form }}
-    {% for form in formset %}
-        {{ form.id }}
-        Filter: {{ forloop.counter }}
-        <ul>
-            <li>{{ form.tracks }}</li><br />
-            <li>{{ form.locations }}</li><br />
-            <li>{{ form.languages }}</li><br />
-        </ul>
-    {% endfor %}
-    <input type="submit" value="Submit" />
-</form>
+{# Display django.contrib.messages as Bootstrap alerts #}
+{% bootstrap_messages %}
+
+{% block bootstrap3_content %}
+
+    <div class="row" style="margin-left: 20px; margin-right: 20px">
+        <h1>Filters</h1>
+        <form method="post" action="">
+            {% csrf_token %}
+            {{ formset.management_form }}
+            {% for form in formset %}
+                <div class="col-sm-4">
+                    {{ form.id }}
+                    Filter: {{ forloop.counter }} {% fontawesome_icon 'user' %}
+                    {% bootstrap_form form %}
+                </div>
+            {% endfor %}
+            {% bootstrap_button "Save" button_type="submit" button_class="btn-primary" %}
+        </form>
+    </div>
+
+{% endblock %}
