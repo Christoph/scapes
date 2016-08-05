@@ -1,0 +1,18 @@
+<h1>Filter</h1>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<form method="post" action="">
+    {% csrf_token %}
+    {{ formset.management_form }}
+    {% for form in formset %}
+        {{ form.id }}
+        Filter: {{ forloop.counter }}
+        <ul>
+            <li>{{ form.tracks }}</li><br />
+            <li>{{ form.locations }}</li><br />
+            <li>{{ form.languages }}</li><br />
+        </ul>
+    {% endfor %}
+    <input type="submit" value="Submit" />
+</form>

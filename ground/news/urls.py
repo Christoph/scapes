@@ -24,4 +24,6 @@ urlpatterns = [
     url(r'^tweets/$', views.overview, name='overview'),
     # ex: /news/tweets/4/
     url(r'^tweets/(?P<tweetid>[0-9]+)/$', views.tweet, name='tweet'),
+    # ex: /news/filter
+    url(r'^filter/$', views.filterView, name='filter'),
 ]

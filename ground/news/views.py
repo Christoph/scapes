@@ -1,14 +1,22 @@
 # Create your views here.
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
+from django.forms import ModelForm, modelform_factory, modelformset_factory
 
-from .models import Tweet
+from .models import Tweet, StreamFilters
 from Mining.twitter_miner import Twitter
 
 
 # Create twitter miner instance
 twitter = Twitter()
 twitter.connect_twitter()
+
+
+class FilterForm(ModelForm):
+    class Meta:
+        model = StreamFilters
+        fields = ['tracks', 'locations', 'languages']
+
 
 
 def index(request):
@@ -33,3 +41,26 @@ def overview(request):
 def tweet(request, tweetid):
     entry = get_object_or_404(Tweet, tweet_id=tweetid)
     return render(request, 'news/tweet.html', {'tweet': entry})
+
+
+def filterView(request):
+    entries = StreamFilters.objects.get(pk=1)
+
+    #form = FilterForm(request.POST, instance=entries)
+    form = modelformset_factory(StreamFilters, form=FilterForm)
+
+    if request.method == 'POST':
+        formset = form(request.POST, request.FILES)
+        if formset.is_valid():
+            formset.save()
+    else:
+        formset = form()
+
+    return render(request, 'news/filter.html', {'formset': formset})
+
+
+
+
+
+
+
