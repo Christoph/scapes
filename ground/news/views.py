@@ -1,6 +1,6 @@
 # Create your views here.
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.forms import ModelForm, modelformset_factory
 from django.urls import reverse
 
@@ -35,8 +35,17 @@ def overview(request):
     #twitter.connect_to_stream(1)
     print("connected")
 
-    tweet_list = Tweet.objects.order_by('-tweet_id')[:15]
+    if request.method == 'POST':
+        post_text = request.POST.get('text')
+        print(post_text)
 
+        response = Tweet.objects.order_by('-tweet_id')[:15]
+        data = [{'tweet_id': item.tweet_id,'text': item.text, 'user_location': item.user_location} for item in response]
+
+        return JsonResponse({"list": data})
+
+
+    tweet_list = Tweet.objects.order_by('-tweet_id')[:15]
     return render(request, 'news/stream.html', {'tweet_list': tweet_list})
 
 

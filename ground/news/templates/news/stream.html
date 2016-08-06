@@ -3,33 +3,20 @@
 {# Load the tag library #}
 {% load bootstrap3 %}
 {% load fontawesome %}
+{% load staticfiles %}
 
 
 {% block content %}
     {% block bootstrap3_content %}
 
+        <script src="{% static 'news/js/livestream.js' %}" ></script>
         <div class="row">
-            <a class="btn btn-warning btn-block" href="{% url 'news:index' %}">Stop Streaming</a>
-            <button id="button-test" type="button" class="btn btn-default">Default</button>
+            <a class="btn btn-warning btn-block" href="{% url 'news:index' %}" onclick=" clearInterval();">Stop Streaming</a>
         </div>
         <div class="row">
-            {% if tweet_list %}
-                <ul class="list-group">
-                    {% for entry in tweet_list %}
-                        <a class="list-group-item" href="{% url 'news:tweet' entry.tweet_id %}">{{ entry.user_location }}: {{ entry.text }}</a>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p>No tweets are available.</p>
-            {% endif %}
+            <ul class="list-group" id="live">
+            </ul>
         </div>
-        <script>
-            $(document).ready(function() {
-                $(function () {
-                    console.log("test")
-                });
-            });
-        </script>
 
     {% endblock %}
 {% endblock %}

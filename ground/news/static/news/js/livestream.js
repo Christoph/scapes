@@ -1,4 +1,5 @@
 $(function() {
+    console.log("StartStreaming")
     // AJAX for posting
     function update_list() {
         console.log("update")
@@ -29,13 +30,13 @@ $(function() {
         });
     };
 
-    // Alert on button click
-    $('#start-streaming').on('click', function(event){
-        console.log("Start Streaming");  // sanity check
+    setInterval(update_list, 2000);
 
-        // Update every 5 seconds
-        setTimeout(update_list, 5000)
-    });
+    /*
+
+    NEEDED AJAX FUNCTIONS
+
+     */
 
     // This function gets cookie with a given name
     function getCookie(name) {
