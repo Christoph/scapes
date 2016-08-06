@@ -1,6 +1,3 @@
-/**
- * Created by chris on 06/08/16.
- */
 $(function() {
     // Alert on button click
     $('#button-test').on('click', function(event){
