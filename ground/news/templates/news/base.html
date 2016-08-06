@@ -3,14 +3,16 @@
 
 {# Load the tag library #}
 {% load bootstrap3 %}
+{% load fontawesome %}
 
-{# Load CSS and JavaScript #}
-{% bootstrap_css %}
-{% bootstrap_javascript %}
 
 <head>
     <meta charset="UTF-8">
     <title>Scapes</title>
+
+    {# Load CSS #}
+    {% bootstrap_css %}
+    {% fontawesome_stylesheet %}
 </head>
 <body>
     <h1 style="text-align: center">Twitter Scapes</h1>
@@ -23,5 +25,9 @@
 
         {% endblock %}
     </div>
+
+    {# Load Javascript #}
+    <script type="text/javascript" href="{% bootstrap_jquery_url %}" />
+    <script type="text/javascript" href="{% bootstrap_javascript_url %}" />
 </body>
 </html>

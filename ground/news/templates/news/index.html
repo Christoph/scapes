@@ -4,10 +4,6 @@
 {% load bootstrap3 %}
 {% load fontawesome %}
 
-{# Load CSS and JavaScript #}
-{% bootstrap_css %}
-{% bootstrap_javascript %}
-{% fontawesome_stylesheet %}
 
 {% block content %}
     {% block bootstrap3_content %}
@@ -30,3 +26,7 @@
 
     {% endblock %}
 {% endblock %}
+
+{# Load Javascript #}
+<script type="text/javascript" href="{% bootstrap_jquery_url %}" />
+<script type="text/javascript" href="{% bootstrap_javascript_url %}" />
