@@ -23,6 +23,8 @@ class StreamFilters(models.Model):
 
 
 class StreamState(models.Model):
+    TRACK_FILTER = "TrackFilter"
+    LOCATION_FILTER = "LocationFilter"
     # State
     is_active = models.BooleanField(default=False)
 

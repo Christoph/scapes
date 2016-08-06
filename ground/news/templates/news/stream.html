@@ -13,14 +13,13 @@
     {% block bootstrap3_content %}
 
         <div class="row">
-            <a class="btn bg-primary" href="{% url 'news:filter' %}">Change Filter</a>
-            <a class="btn bg-primary" href="{% url 'news:overview' %}">Start Stream</a>
+            <a class="btn btn-warning btn-block" href="{% url 'news:index' %}">Stop Streaming</a>
         </div>
         <div class="row">
             {% if tweet_list %}
-                <ul>
+                <ul class="list-group">
                     {% for entry in tweet_list %}
-                        <li><a href="{% url 'news:tweet' entry.tweet_id %}">{{ entry.text }}</a></li>
+                        <a class="list-group-item" href="{% url 'news:tweet' entry.tweet_id %}">{{ entry.user_location }}: {{ entry.text }}</a>
                     {% endfor %}
                 </ul>
             {% else %}

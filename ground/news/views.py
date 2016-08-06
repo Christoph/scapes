@@ -19,7 +19,6 @@ class FilterForm(ModelForm):
         fields = ['tracks', 'locations', 'languages']
 
 
-
 def index(request):
     tweet_list = Tweet.objects.order_by('-tweet_id')[:20]
 
@@ -33,10 +32,12 @@ def index(request):
 
 
 def overview(request):
-    twitter.connect_to_stream(2)
+    #twitter.connect_to_stream(1)
     print("connected")
 
-    return HttpResponse("Twitter Stream")
+    tweet_list = Tweet.objects.order_by('-tweet_id')[:15]
+
+    return render(request, 'news/stream.html', {'tweet_list': tweet_list})
 
 
 def tweet(request, tweetid):
