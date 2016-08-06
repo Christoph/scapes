@@ -12,8 +12,9 @@
     <title>Scapes</title>
 
     {# Load CSS #}
-    {% bootstrap_css %}
     {% fontawesome_stylesheet %}
+    <link rel="stylesheet" type="text/css" href="{% static 'news/css/livestream.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% bootstrap_css_url %}">
 
     {# Load Javascript #}
     <script src="{% bootstrap_jquery_url %}" ></script>

@@ -32,21 +32,24 @@ def index(request):
 
 
 def overview(request):
-    #twitter.connect_to_stream(1)
-    print("connected")
 
+    # Load data with ajax
     if request.method == 'POST':
-        post_text = request.POST.get('text')
-        print(post_text)
+        # post_text = request.POST.get('text')
+        # print(post_text)
 
-        response = Tweet.objects.order_by('-tweet_id')[:15]
-        data = [{'tweet_id': item.tweet_id,'text': item.text, 'user_location': item.user_location} for item in response]
+        if not twitter.streaming:
+            twitter.connect_to_stream(1)
+            print("Connected")
+
+        new = twitter.get_new_tweets()
+
+        data = [{'tweet_id': item.tweet_id,'text': item.text, 'user_location': item.user_location} for item in new]
 
         return JsonResponse({"list": data})
 
-
-    tweet_list = Tweet.objects.order_by('-tweet_id')[:15]
-    return render(request, 'news/stream.html', {'tweet_list': tweet_list})
+    # Load page
+    return render(request, 'news/stream.html')
 
 
 def tweet(request, tweetid):

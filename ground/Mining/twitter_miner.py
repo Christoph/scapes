@@ -1,4 +1,6 @@
 # Import the necessary methods from tweepy library
+from django.utils import timezone
+from datetime import datetime
 from tweepy.streaming import StreamListener
 from tweepy import OAuthHandler
 from tweepy import Stream
@@ -37,6 +39,16 @@ class Twitter:
     def __init__(self):
         self.api = []
         self.stream = []
+        self.streaming = False
+        self.lastpull = datetime.now(tz=timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
+
+
+    def get_new_tweets(self):
+        new = Tweet.objects.filter(created_at__gt=self.lastpull)
+
+        self.lastpull = datetime.now(tz=timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
+
+        return new
 
 
     def connect_twitter(self):
@@ -75,6 +87,8 @@ class Twitter:
         streamstate.is_active = True
         streamstate.save()
 
+        self.streaming = True
+
 
     def disconnet_from_stream(self):
         self.stream.disconnect()
@@ -83,6 +97,8 @@ class Twitter:
 
         streamstate.is_active = False
         streamstate.save()
+
+        self.streaming = False
 
 
 
