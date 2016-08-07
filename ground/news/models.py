@@ -3,11 +3,9 @@ from datetime import datetime
 from django.utils import timezone
 from email._parseaddr import parsedate
 
-current_timezone = timezone.get_current_timezone()
-
 
 def parse_datetime(string):
-    return datetime(*(parsedate(string)[:6]), tzinfo=current_timezone)
+    return datetime(*(parsedate(string)[:6]), tzinfo=timezone.utc)
 
 
 class StreamFilters(models.Model):

@@ -1,5 +1,4 @@
 $(function() {
-    console.log("StartStreaming")
     // AJAX for posting
     function update_list() {
         $.ajax({
@@ -11,14 +10,20 @@ $(function() {
             success : function(json) {
                 if(json.list.length > 0)
                 {
-                    json.list.forEach(function(element) {
+                    console.log("new")
+                    json.list.forEach(function(element)
+                    {
                         // Remove the last element if more than 25
-                        if($('#live').children().length >= 25)
+                        if($('#live').children().length >= 15)
                         {
                             $('#live').children().last().remove();
                         }
+                    });
+
+                    json.list.forEach(function(element)
+                    {
                         // Add new element
-                        $("<a class='list-group-item'><strong>"+element.user_location+"</strong>: "+element.text+"</a>").prependTo('#live');
+                        $("<a class='list-group-item'><strong>"+element.user_location+"</strong>: "+element.text+"</a>").hide().prependTo('#live').fadeIn(400);
                     });
                 }
             },

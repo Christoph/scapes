@@ -6,6 +6,7 @@ from tweepy import OAuthHandler
 from tweepy import Stream
 import tweepy
 import json
+import re
 from ast import literal_eval
 
 from news.models import StreamFilters, StreamState, Tweet
@@ -14,9 +15,21 @@ from news.models import StreamFilters, StreamState, Tweet
 # Save Tweets into the db
 class StdOutListener(StreamListener):
 
-    def on_data(self, data):
+    pattern = "\"media_url\": \"(.*)\""
 
+    def on_data(self, data):
         parsed = json.loads(data)
+
+        m = re.search(r"(media_url)", data)
+
+        print("regex")
+
+
+        print(m)
+
+
+
+        # print(json.dumps(parsed, indent=4, sort_keys=True))
 
         t = Tweet.create_from_json(parsed)
         t.save()
@@ -39,13 +52,14 @@ class Twitter:
         self.api = []
         self.stream = []
         self.streaming = False
-        self.lastpull = datetime.now(tz=timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
+        self.lastpull = 0
 
 
     def get_new_tweets(self):
-        new = Tweet.objects.filter(created_at__gt=self.lastpull)
+        new = Tweet.objects.filter(pk__gt=self.lastpull)
+        print(new.all()[0].pk)
 
-        self.lastpull = datetime.now(tz=timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
+        self.lastpull = new.all()[0].pk
 
         return new
 
