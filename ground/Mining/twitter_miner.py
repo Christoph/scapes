@@ -52,14 +52,14 @@ class Twitter:
         self.api = []
         self.stream = []
         self.streaming = False
-        self.lastpull = 0
+        self.lastpull = Tweet.objects.order_by("-created_at")[0].created_at
 
 
     def get_new_tweets(self):
-        new = Tweet.objects.filter(pk__gt=self.lastpull)
-        print(new.all()[0].pk)
+        new = Tweet.objects.filter(created_at__gt=self.lastpull)
 
-        self.lastpull = new.all()[0].pk
+        if len(new) > 0:
+            self.lastpull = new.order_by("-created_at")[0].created_at
 
         return new
 

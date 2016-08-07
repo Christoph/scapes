@@ -10,7 +10,6 @@ $(function() {
             success : function(json) {
                 if(json.list.length > 0)
                 {
-                    console.log("new")
                     json.list.forEach(function(element)
                     {
                         // Remove the last element if more than 25
