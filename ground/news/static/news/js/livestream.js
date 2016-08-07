@@ -2,7 +2,6 @@ $(function() {
     console.log("StartStreaming")
     // AJAX for posting
     function update_list() {
-        console.log("update")
         $.ajax({
             url : "", // the endpoint
             type : "POST", // http method
@@ -13,13 +12,13 @@ $(function() {
                 if(json.list.length > 0)
                 {
                     json.list.forEach(function(element) {
-                        // Remove the last element if more than 15
-                        if($('#live').children().length >= 15)
+                        // Remove the last element if more than 25
+                        if($('#live').children().length >= 25)
                         {
                             $('#live').children().last().remove();
                         }
                         // Add new element
-                        $('#live').prepend("<a class='list-group-item'>"+element.user_location+": "+element.text+"</a>");
+                        $("<a class='list-group-item'><strong>"+element.user_location+"</strong>: "+element.text+"</a>").prependTo('#live');
                     });
                 }
             },
@@ -32,6 +31,7 @@ $(function() {
             }
         });
     };
+
 
     setInterval(update_list, 500);
 

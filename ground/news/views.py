@@ -20,7 +20,7 @@ class FilterForm(ModelForm):
 
 
 def index(request):
-    tweet_list = Tweet.objects.order_by('-tweet_id')[:20]
+    tweet_list = Tweet.objects.order_by('-created_at')[:20]
 
     context = {
         'tweet_list': tweet_list,

@@ -1,0 +1,6 @@
+a.list-group-item {
+    line-height: 2em;
+    margin: 0.1em auto;
+    padding: 0 0.1em;
+    overflow: hidden;
+}

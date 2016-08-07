@@ -17,7 +17,6 @@ class StdOutListener(StreamListener):
     def on_data(self, data):
 
         parsed = json.loads(data)
-        print(parsed)
 
         t = Tweet.create_from_json(parsed)
         t.save()
