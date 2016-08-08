@@ -7,7 +7,7 @@ import json
 import re
 from ast import literal_eval
 
-from news.models import StreamFilters, StreamState, Tweet
+from news.models import StreamFilters, StreamState, Tweets
 
 
 # Save Tweets into the db
@@ -16,16 +16,7 @@ class StdOutListener(StreamListener):
     def on_data(self, data):
         parsed = json.loads(data)
 
-        # m = re.search(r'(media_url": ")(.*)"', data)
-        m = re.search(r'(media_url).*(http:.*?\.jpg)', data)
-
-        print("regex")
-
-        if m is not None:
-            print(m.groups())
-            print(re.sub(r'\\\\\\\\', "", m.group(2)))
-
-        t = Tweet.create_from_json(parsed)
+        t = Tweets.create_from_json(parsed)
         t.save()
 
         return True
@@ -46,8 +37,8 @@ class Twitter:
         self.api = []
         self.stream = []
         self.streaming = False
-        if Tweet.objects.all():
-            initial = Tweet.objects.order_by("-created_at")[0].created_at
+        if Tweets.objects.all():
+            initial = Tweets.objects.order_by("-created_at")[0].created_at
         else:
             initial = "2016-01-01 00:00:00+00:00"
 
@@ -55,7 +46,7 @@ class Twitter:
 
 
     def get_new_tweets(self):
-        new = Tweet.objects.filter(created_at__gt=self.lastpull)
+        new = Tweets.objects.filter(created_at__gt=self.lastpull)
 
         if len(new) > 0:
             self.lastpull = new.order_by("-created_at")[0].created_at

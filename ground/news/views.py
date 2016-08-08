@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.forms import ModelForm, modelformset_factory
 from django.urls import reverse
 
-from .models import Tweet, StreamFilters
+from .models import Tweets, StreamFilters
 from Mining.twitter_miner import Twitter
 
 
@@ -20,7 +20,7 @@ class FilterForm(ModelForm):
 
 
 def index(request):
-    tweet_list = Tweet.objects.order_by('-created_at')[:20]
+    tweet_list = Tweets.objects.order_by('-created_at')[:20]
 
     context = {
         'tweet_list': tweet_list,
@@ -51,7 +51,7 @@ def overview(request):
 
 
 def tweet(request, tweetid):
-    entry = get_object_or_404(Tweet, tweet_id=tweetid)
+    entry = get_object_or_404(Tweets, tweet_id=tweetid)
     return render(request, 'news/tweet.html', {'tweet': entry})
 
 

@@ -2,6 +2,7 @@ from django.db import models
 from datetime import datetime
 from django.utils import timezone
 from email._parseaddr import parsedate
+import re
 
 
 def parse_datetime(string):
@@ -37,9 +38,9 @@ class StreamState(models.Model):
 
 
 # Create your models here.
-class Tweet(models.Model):
+class Tweets(models.Model):
     # Basic tweet info
-    tweet_id = models.BigIntegerField(primary_key=True)
+    tweet_id = models.CharField(max_length=200)
     text = models.CharField(max_length=250)
     truncated = models.BooleanField(default=False)
     lang = models.CharField(max_length=9, null=True, blank=True, default=None)
@@ -47,8 +48,9 @@ class Tweet(models.Model):
     # Basic user info
     user_id = models.BigIntegerField()
     user_screen_name = models.CharField(max_length=50)
-    user_name = models.CharField(max_length=150)
+    user_name = models.CharField(max_length=50)
     user_verified = models.BooleanField(default=False)
+    user_location = models.CharField(max_length=150, null=True, blank=True, default=None)
 
     # Timing parameters
     created_at = models.DateTimeField(db_index=True)  # should be UTC
@@ -58,11 +60,16 @@ class Tweet(models.Model):
     # none, low, or medium
     filter_level = models.CharField(max_length=6, null=True, blank=True, default=None)
 
-    # Geo parameters
-    latitude = models.FloatField(null=True, blank=True, default=None)
-    longitude = models.FloatField(null=True, blank=True, default=None)
-    user_geo_enabled = models.BooleanField(default=False)
-    user_location = models.CharField(max_length=150, null=True, blank=True, default=None)
+    # Place
+    place_name = models.CharField(max_length=100, null=True, blank=True)
+    place_type = models.CharField(max_length=100, null=True, blank=True)
+    place_country = models.CharField(max_length=100, null=True, blank=True)
+    place_full_name = models.CharField(max_length=100, null=True, blank=True)
+
+    # Entities
+    media_url = models.CharField(max_length=150, null=True, blank=True)
+    urls = models.CharField(max_length=250, null=True, blank=True)
+    hashtags = models.CharField(max_length=150, null=True, blank=True)
 
     # Engagement - not likely to be very useful for streamed tweets but whatever
     favorite_count = models.PositiveIntegerField(null=True, blank=True)
@@ -83,26 +90,46 @@ class Tweet(models.Model):
     @classmethod
     def create_from_json(cls, raw):
 
+        # Prefixes
         user = raw['user']
+        place = raw['place']
+        entitie = raw['entities']
+
+
+        # Set retweeted status
         retweeted_status = raw.get('retweeted_status')
         if retweeted_status is None:
             retweeted_status = {'id': None}
 
-        # The "coordinates" entry looks like this:
-        #
-        # "coordinates":
-        # {
-        #     "coordinates":
-        #     [
-        #         -75.14310264,
-        #         40.05701649
-        #     ],
-        #     "type":"Point"
-        # }
+        # Set place
+        places = [None, None, None, None]
+        if raw.get("place"):
+            if place.get('name'):
+                places[0] = place['name']
+            if place.get('full_name'):
+                places[0] = place['full_name']
+            if place.get('type'):
+                places[0] = place['type']
+            if place.get('country'):
+                places[0] = place['country']
 
-        coordinates = (None, None)
-        if raw['coordinates']:
-            coordinates = raw['coordinates']['coordinates']
+        # Set entities
+        entities = {"media": "", "urls": "", "hashtags": ""}
+        if raw.get("entities"):
+            if entitie.get('media'):
+                for entry in entitie['media']:
+                    entities['media'] = entities['media'] + " " + entry['media_url']
+                entities['media'] = re.sub(r'\\\\', "", entities['media'].strip())
+                print(entities['media'])
+            if entitie.get('urls'):
+                for entry in entitie['urls']:
+                    entities['urls'] = entities['urls'] + " " + entry['expanded_url']
+                entities['urls'] = re.sub(r'\\\\', "", entities['urls'].strip())
+                print(entities['urls'])
+            if entitie.get('hashtags'):
+                for entry in entitie['hashtags']:
+                    entities['hashtags'] = entities['hashtags'] + "," + entry['text']
+                entities['hashtags'] = entities['hashtags'].strip()
 
         # Replace negative counts with None to indicate missing data
         counts = {
@@ -117,7 +144,7 @@ class Tweet(models.Model):
 
         return cls(
                 # Basic tweet info
-                tweet_id=raw['id'],
+                tweet_id=raw['id_str'],
                 text=raw['text'],
                 truncated=raw['truncated'],
                 lang=raw.get('lang'),
@@ -127,6 +154,7 @@ class Tweet(models.Model):
                 user_screen_name=user['screen_name'],
                 user_name=user['name'],
                 user_verified=user['verified'],
+                user_location=user.get('location'),
 
                 # Timing parameters
                 created_at=parse_datetime(raw['created_at']),
@@ -136,11 +164,16 @@ class Tweet(models.Model):
                 # none, low, or medium
                 filter_level=raw.get('filter_level'),
 
-                # Geo parameters
-                latitude=coordinates[1],
-                longitude=coordinates[0],
-                user_geo_enabled=user.get('geo_enabled'),
-                user_location=user.get('location'),
+                # Place
+                place_name=places[0],
+                place_full_name=places[1],
+                place_type=places[2],
+                place_country=places[3],
+
+                # Entities
+                media_url=entities.get("media"),
+                urls=entities.get("urls"),
+                hashtags=entities.get("hashtags"),
 
                 # Engagement - not likely to be very useful for streamed tweets but whatever
                 favorite_count=counts.get('favorite_count'),
