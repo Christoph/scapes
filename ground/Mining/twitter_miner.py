@@ -46,7 +46,12 @@ class Twitter:
         self.api = []
         self.stream = []
         self.streaming = False
-        self.lastpull = Tweet.objects.order_by("-created_at")[0].created_at
+        if Tweet.objects.all():
+            initial = Tweet.objects.order_by("-created_at")[0].created_at
+        else:
+            initial = "2016-01-01 00:00:00+00:00"
+
+        self.lastpull = initial
 
 
     def get_new_tweets(self):
