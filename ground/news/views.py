@@ -27,7 +27,6 @@ def index(request):
     }
 
     twitter.disconnet_from_stream()
-    print("disconnected")
     return render(request, 'news/index.html', context)
 
 
@@ -40,7 +39,6 @@ def overview(request):
 
         if not twitter.streaming:
             twitter.connect_to_stream(1)
-            print("Connected")
 
         new = twitter.get_new_tweets()
 

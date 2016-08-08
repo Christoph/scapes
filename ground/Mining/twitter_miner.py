@@ -1,6 +1,4 @@
 # Import the necessary methods from tweepy library
-from django.utils import timezone
-from datetime import datetime
 from tweepy.streaming import StreamListener
 from tweepy import OAuthHandler
 from tweepy import Stream
@@ -15,21 +13,17 @@ from news.models import StreamFilters, StreamState, Tweet
 # Save Tweets into the db
 class StdOutListener(StreamListener):
 
-    pattern = "\"media_url\": \"(.*)\""
-
     def on_data(self, data):
         parsed = json.loads(data)
 
-        m = re.search(r"(media_url)", data)
+        # m = re.search(r'(media_url": ")(.*)"', data)
+        m = re.search(r'(media_url).*(http:.*?\.jpg)', data)
 
         print("regex")
 
-
-        print(m)
-
-
-
-        # print(json.dumps(parsed, indent=4, sort_keys=True))
+        if m is not None:
+            print(m.groups())
+            print(re.sub(r'\\\\\\\\', "", m.group(2)))
 
         t = Tweet.create_from_json(parsed)
         t.save()
@@ -74,37 +68,45 @@ class Twitter:
         # Create handlers
         self.api = tweepy.API(auth)
         self.stream = Stream(auth, listener)
+        print("Authenticated")
 
 
     def connect_to_stream(self, choosen):
-        # Filter by track and language
-        if choosen == 1:
-            filters = StreamFilters.objects.get(pk=choosen)
-
-            tracks = literal_eval(filters.tracks)
-            languages = literal_eval(filters.languages)
-
-            self.stream.filter(track=tracks, languages=languages, async=True)
-
-        # Filter by location and language
-        if choosen == 2:
-            filters = StreamFilters.objects.get(pk=choosen)
-
-            language = literal_eval(filters.languages)
-            locations = literal_eval(filters.locations)
-
-            self.stream.filter(locations=locations, languages=language, async=True)
-
         streamstate = StreamState.objects.get(pk=3)
 
-        streamstate.is_active = True
-        streamstate.save()
+        # Filter by track and language
+        if not self.streaming:
+            if choosen == 1:
+                filters = StreamFilters.objects.get(pk=choosen)
 
-        self.streaming = True
+                tracks = literal_eval(filters.tracks)
+                languages = literal_eval(filters.languages)
+
+                self.stream.filter(track=tracks, languages=languages, async=True)
+                print("Streaming")
+
+                streamstate.is_active = True
+                streamstate.save()
+                self.streaming = True
+
+            # Filter by location and language
+            if choosen == 2:
+                filters = StreamFilters.objects.get(pk=choosen)
+
+                language = literal_eval(filters.languages)
+                locations = literal_eval(filters.locations)
+
+                self.stream.filter(locations=locations, languages=language, async=True)
+                print("Streaming")
+
+                streamstate.is_active = True
+                streamstate.save()
+                self.streaming = True
 
 
     def disconnet_from_stream(self):
         self.stream.disconnect()
+        print("Stopped Streaming")
 
         streamstate = StreamState.objects.get(pk=3)
 
