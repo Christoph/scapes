@@ -41,7 +41,7 @@ class StreamState(models.Model):
 class Tweets(models.Model):
     # Basic tweet info
     tweet_id = models.CharField(max_length=200)
-    text = models.CharField(max_length=250)
+    text = models.CharField(max_length=500)
     truncated = models.BooleanField(default=False)
     lang = models.CharField(max_length=9, null=True, blank=True, default=None)
 
@@ -68,7 +68,7 @@ class Tweets(models.Model):
 
     # Entities
     media_url = models.CharField(max_length=150, null=True, blank=True)
-    urls = models.CharField(max_length=500, null=True, blank=True)
+    urls = models.CharField(max_length=250, null=True, blank=True)
     hashtags = models.CharField(max_length=150, null=True, blank=True)
 
     # Engagement - not likely to be very useful for streamed tweets but whatever
