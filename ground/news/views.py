@@ -42,7 +42,7 @@ def overview(request):
 
         new = twitter.get_new_tweets()
 
-        data = [{'tweet_id': item.tweet_id,'text': item.text, 'user_location': item.user_location} for item in new]
+        data = [{'tweet_id': item.tweet_id,'text': item.text, 'user_location': item.user_location, 'retweet': item.retweeted_status_id} for item in new]
 
         return JsonResponse({"list": data})
 

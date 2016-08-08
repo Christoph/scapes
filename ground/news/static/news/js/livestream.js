@@ -21,8 +21,19 @@ $(function() {
 
                     json.list.forEach(function(element)
                     {
+                        var retweet = "";
+
+                        if(element.retweet > 0)
+                        {
+                            retweet = "retweet";
+                        }
+                        else
+                        {
+                            retweet = "original";
+                        }
+
                         // Add new element
-                        $("<a class='list-group-item'><strong>"+element.user_location+"</strong>: "+element.text+"</a>").hide().prependTo('#live').fadeIn(400);
+                        $("<a class='list-group-item "+ retweet +"'><strong>"+element.user_location+"</strong>: "+element.text+"</a>").hide().prependTo('#live').fadeIn(400);
                     });
                 }
             },

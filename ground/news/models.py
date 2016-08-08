@@ -68,7 +68,7 @@ class Tweets(models.Model):
 
     # Entities
     media_url = models.CharField(max_length=150, null=True, blank=True)
-    urls = models.CharField(max_length=250, null=True, blank=True)
+    urls = models.CharField(max_length=500, null=True, blank=True)
     hashtags = models.CharField(max_length=150, null=True, blank=True)
 
     # Engagement - not likely to be very useful for streamed tweets but whatever
@@ -93,13 +93,16 @@ class Tweets(models.Model):
         # Prefixes
         user = raw['user']
         place = raw['place']
-        entitie = raw['entities']
-
 
         # Set retweeted status
         retweeted_status = raw.get('retweeted_status')
         if retweeted_status is None:
             retweeted_status = {'id': None}
+            retweet = raw
+            entitie = raw['entities']
+        else:
+            retweet = raw["retweeted_status"]
+            entitie = raw["retweeted_status"]['entities']
 
         # Set place
         places = [None, None, None, None]
@@ -120,12 +123,12 @@ class Tweets(models.Model):
                 for entry in entitie['media']:
                     entities['media'] = entities['media'] + " " + entry['media_url']
                 entities['media'] = re.sub(r'\\\\', "", entities['media'].strip())
-                print(entities['media'])
+
             if entitie.get('urls'):
                 for entry in entitie['urls']:
                     entities['urls'] = entities['urls'] + " " + entry['expanded_url']
                 entities['urls'] = re.sub(r'\\\\', "", entities['urls'].strip())
-                print(entities['urls'])
+
             if entitie.get('hashtags'):
                 for entry in entitie['hashtags']:
                     entities['hashtags'] = entities['hashtags'] + "," + entry['text']
@@ -145,7 +148,7 @@ class Tweets(models.Model):
         return cls(
                 # Basic tweet info
                 tweet_id=raw['id_str'],
-                text=raw['text'],
+                text=retweet['text'],
                 truncated=raw['truncated'],
                 lang=raw.get('lang'),
 
